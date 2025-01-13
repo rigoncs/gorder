@@ -1,23 +1,17 @@
 package main
 
 import (
-	"io"
+	"github.com/rigoncs/gorder/common/config"
+	"github.com/spf13/viper"
 	"log"
-	"net/http"
 )
 
-func main() {
-	log.Println("Listening :8082")
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%v", r.RequestURI)
-		_, _ = io.WriteString(w, "<h1>Welcome to Home Page</h1>")
-	})
-	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%v", r.RequestURI)
-		_, _ = io.WriteString(w, "pong")
-	})
-	if err := http.ListenAndServe(":8082", mux); err != nil {
+func init() {
+	if err := config.NewViperConfig(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func main() {
+	log.Printf("%v", viper.Get("order"))
 }
