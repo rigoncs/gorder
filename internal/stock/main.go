@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"github.com/rigoncs/gorder/common/config"
+	"github.com/rigoncs/gorder/common/discovery"
 	"github.com/rigoncs/gorder/common/genproto/stockpb"
 	"github.com/rigoncs/gorder/common/server"
 	"github.com/rigoncs/gorder/stock/ports"
@@ -22,10 +23,21 @@ func main() {
 	serviceName := viper.GetString("stock.service-name")
 	serverType := viper.GetString("stock.server-to-run")
 
+	logrus.Info(serverType)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	application := service.NewApplication(ctx)
+
+	deregisterFunc, err := discovery.RegisterToConsul(ctx, serviceName)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	defer func() {
+		_ = deregisterFunc()
+	}()
+
 	switch serverType {
 	case "grpc":
 		server.RunGRPCServer(serviceName, func(server *grpc.Server) {
