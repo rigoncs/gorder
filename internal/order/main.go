@@ -6,6 +6,7 @@ import (
 	"github.com/rigoncs/gorder/common/config"
 	"github.com/rigoncs/gorder/common/discovery"
 	"github.com/rigoncs/gorder/common/genproto/orderpb"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/common/server"
 	"github.com/rigoncs/gorder/order/ports"
 	"github.com/rigoncs/gorder/order/service"
@@ -16,6 +17,7 @@ import (
 )
 
 func init() {
+	logging.Init()
 	if err := config.NewViperConfig(); err != nil {
 		log.Fatal(err)
 	}
