@@ -5,6 +5,7 @@ import (
 	"github.com/rigoncs/gorder/common/config"
 	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/common/server"
+	"github.com/rigoncs/gorder/payment/infrastructure/consumer"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -29,6 +30,9 @@ func main() {
 		_ = ch.Close()
 		_ = closeCh()
 	}()
+
+	go consumer.NewConsumer().Listen(ch)
+
 	paymentHandler := NewPaymentHandler()
 	switch serverType {
 	case "http":
