@@ -10,6 +10,7 @@ require (
 	github.com/rigoncs/gorder/common v0.0.0-00010101000000-000000000000
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.19.0
+	github.com/stripe/stripe-go/v80 v80.2.1
 )
 
 require (
