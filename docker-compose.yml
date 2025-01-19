@@ -22,4 +22,4 @@ services:
       - "4318:4318"
       - "4317:4317"
     environment:
-      COLLETCOR_OTLP_ENABLED: true
+      COLLECTOR_OTLP_ENABLED: true
