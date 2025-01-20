@@ -21,7 +21,7 @@ func init() {
 }
 
 func main() {
-	serviceName := viper.GetString("payment.service_name")
+	serviceName := viper.GetString("payment.service-name")
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
