@@ -8,6 +8,7 @@ import (
 	"github.com/rigoncs/gorder/order/app"
 	"github.com/rigoncs/gorder/order/app/command"
 	"github.com/rigoncs/gorder/order/app/query"
+	"github.com/rigoncs/gorder/order/convertor"
 	"net/http"
 )
 
@@ -26,7 +27,7 @@ func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID stri
 	}
 	r, err := H.app.Commands.CreateOrder.Handle(ctx, command.CreateOrder{
 		CustomerID: req.CustomerID,
-		Items:      req.Items,
+		Items:      convertor.NewItemWithQuantityConvertor().ClientsToEntities(req.Items),
 	})
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"error": err})
