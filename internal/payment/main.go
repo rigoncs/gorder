@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"github.com/rigoncs/gorder/common/broker"
-	"github.com/rigoncs/gorder/common/config"
+	_ "github.com/rigoncs/gorder/common/config"
 	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/common/server"
 	"github.com/rigoncs/gorder/common/tracing"
@@ -15,9 +15,6 @@ import (
 
 func init() {
 	logging.Init()
-	if err := config.NewViperConfig(); err != nil {
-		logrus.Fatal(err)
-	}
 }
 
 func main() {

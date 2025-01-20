@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/rigoncs/gorder/common/broker"
-	"github.com/rigoncs/gorder/common/config"
+	_ "github.com/rigoncs/gorder/common/config"
 	"github.com/rigoncs/gorder/common/discovery"
 	"github.com/rigoncs/gorder/common/genproto/orderpb"
 	"github.com/rigoncs/gorder/common/logging"
@@ -16,14 +16,10 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
-	"log"
 )
 
 func init() {
 	logging.Init()
-	if err := config.NewViperConfig(); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func main() {
