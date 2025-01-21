@@ -6,6 +6,7 @@ replace github.com/rigoncs/gorder/common => ../common
 
 require (
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-playground/assert/v2 v2.2.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/rigoncs/gorder/common v0.0.0-00010101000000-000000000000
