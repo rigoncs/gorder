@@ -28,3 +28,5 @@ go.work.sum
 .gobincache/
 **/tmp/
 **/bin/
+
+mysql_data
