@@ -50,7 +50,7 @@ func (G GRPCServer) UpdateOder(ctx context.Context, request *orderpb.Order) (_ *
 		request.ID,
 		request.CustomerID,
 		request.Status,
-		request.PaymenLink,
+		request.PaymentLink,
 		convertor.NewItemConvertor().ProtosToEntities(request.Items))
 	if err != nil {
 		err = status.Error(codes.Internal, err.Error())

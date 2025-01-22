@@ -26,11 +26,11 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 	}
 	logrus.Infof("create payment link for order: %s success, payment link: %s", cmd.Order.ID, link)
 	newOrder := &orderpb.Order{
-		ID:         cmd.Order.ID,
-		CustomerID: cmd.Order.CustomerID,
-		Status:     "waiting_for_payment",
-		Items:      cmd.Order.Items,
-		PaymenLink: link,
+		ID:          cmd.Order.ID,
+		CustomerID:  cmd.Order.CustomerID,
+		Status:      "waiting_for_payment",
+		Items:       cmd.Order.Items,
+		PaymentLink: link,
 	}
 	err = c.orderGRPC.UpdateOrder(ctx, newOrder)
 	return link, err
