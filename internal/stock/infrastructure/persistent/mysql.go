@@ -3,10 +3,12 @@ package persistent
 import (
 	"context"
 	"fmt"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 	"time"
 )
 
@@ -57,8 +59,10 @@ func (d MySQL) StartTransaction(fc func(tx *gorm.DB) error) error {
 }
 
 func (d MySQL) BatchGetStockByID(ctx context.Context, productIDs []string) ([]StockModel, error) {
+	_, deferLog := logging.WhenMySQL(ctx, "BatchGetStockByID", productIDs)
 	var result []StockModel
-	tx := d.db.WithContext(ctx).Where("product_id IN ?", productIDs).Find(&result)
+	tx := d.db.WithContext(ctx).Clauses(clause.Returning{}).Where("product_id IN ?", productIDs).Find(&result)
+	defer deferLog(result, &tx.Error)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -66,5 +70,9 @@ func (d MySQL) BatchGetStockByID(ctx context.Context, productIDs []string) ([]St
 }
 
 func (d MySQL) Create(ctx context.Context, create *StockModel) error {
-	return d.db.WithContext(ctx).Create(create).Error
+	_, deferLog := logging.WhenMySQL(ctx, "Create", create)
+	var returning StockModel
+	err := d.db.WithContext(ctx).Model(&returning).Clauses(clause.Returning{}).Create(create).Error
+	defer deferLog(returning, &err)
+	return err
 }
