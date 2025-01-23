@@ -6,6 +6,7 @@ import (
 	_ "github.com/rigoncs/gorder/common/config"
 	"github.com/rigoncs/gorder/stock/entity"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent"
+	"github.com/rigoncs/gorder/stock/infrastructure/persistent/builder"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/mysql"
@@ -93,7 +94,7 @@ func TestMySQLStockRepository_UpdateStock_Race(t *testing.T) {
 	}
 
 	wg.Wait()
-	res, err := db.BatchGetStockByID(ctx, []string{testItem})
+	res, err := db.BatchGetStockByID(ctx, builder.NewStock().ProductIDs(testItem))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, res, "res should not be empty")
 
@@ -149,7 +150,7 @@ func TestMySQLStockRepository_UpdateStock_OverSell(t *testing.T) {
 		time.Sleep(20 * time.Millisecond)
 	}
 	wg.Wait()
-	res, err := db.BatchGetStockByID(ctx, []string{testItem})
+	res, err := db.BatchGetStockByID(ctx, builder.NewStock().ProductIDs(testItem))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, res, "res should not be empty")
 
