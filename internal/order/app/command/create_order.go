@@ -8,6 +8,7 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rigoncs/gorder/common/broker"
 	"github.com/rigoncs/gorder/common/decorator"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/order/app/query"
 	"github.com/rigoncs/gorder/order/convertor"
 	domain "github.com/rigoncs/gorder/order/domain/order"
@@ -58,6 +59,9 @@ func NewCreateOrderHandler(
 }
 
 func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*CreateOrderResult, error) {
+	var err error
+	defer logging.WhenCommandExecute(ctx, "CreateOrderHandler", cmd, err)
+	
 	q, err := c.channel.QueueDeclare(broker.EventOrderCreated, true, false, false, false, nil)
 	if err != nil {
 		return nil, err

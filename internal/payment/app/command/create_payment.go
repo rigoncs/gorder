@@ -4,9 +4,12 @@ import (
 	"context"
 	"github.com/rigoncs/gorder/common/decorator"
 	"github.com/rigoncs/gorder/common/genproto/orderpb"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/payment/domain"
 	"github.com/sirupsen/logrus"
 )
+
+// TODO: ACL清理
 
 type CreatePayment struct {
 	Order *orderpb.Order
@@ -20,11 +23,13 @@ type createPaymentHandler struct {
 }
 
 func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (string, error) {
+	var err error
+	defer logging.WhenCommandExecute(ctx, "CreatePaymentHandler", cmd, err)
+
 	link, err := c.processor.CreatePaymentLink(ctx, cmd.Order)
 	if err != nil {
 		return "", err
 	}
-	logrus.Infof("create payment link for order: %s success, payment link: %s", cmd.Order.ID, link)
 	newOrder := &orderpb.Order{
 		ID:          cmd.Order.ID,
 		CustomerID:  cmd.Order.CustomerID,

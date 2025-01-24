@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rigoncs/gorder/common/broker"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/order/app"
 	"github.com/rigoncs/gorder/order/app/command"
 	domain "github.com/rigoncs/gorder/order/domain/order"
@@ -44,24 +46,24 @@ func (c *Consumer) Listen(ch *amqp.Channel) {
 }
 
 func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Queue) {
-	ctx := broker.ExtractRabbitMQHeaders(context.Background(), msg.Headers)
 	t := otel.Tracer("rabbitmq")
-	_, span := t.Start(ctx, fmt.Sprintf("rabbitmq.%s.consume", q.Name))
+	ctx, span := t.Start(broker.ExtractRabbitMQHeaders(context.Background(), msg.Headers), fmt.Sprintf("rabbitmq.%s.consume", q.Name))
 	defer span.End()
 
 	var err error
 	defer func() {
 		if err != nil {
+			logging.Warnf(ctx, nil, "consume failed||from=%s||msg=%+v||err=%v", q.Name, msg, err)
 			_ = msg.Nack(false, false)
 		} else {
+			logging.Infof(ctx, nil, "%s", "consume success")
 			_ = msg.Ack(false)
 		}
 	}()
 
 	o := &domain.Order{}
-	if err := json.Unmarshal(msg.Body, o); err != nil {
-		logrus.Infof("error unmarshal msg.body into domain.order, err = %v", err)
-
+	if err = json.Unmarshal(msg.Body, o); err != nil {
+		err = errors.Wrap(err, "error unmarshal msg.body into domain.order")
 		return
 	}
 	_, err = c.app.Commands.UpdateOrder.Handle(ctx, command.UpdateOrder{
@@ -74,12 +76,11 @@ func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Que
 		},
 	})
 	if err != nil {
-		logrus.Infof("error updating order, orderID = %s, err = %v", o.ID, err)
+		logging.Errorf(ctx, nil, "error updating order||orderID=%s||err=%v", o.ID, err)
 		if err = broker.HandleRetry(ctx, ch, &msg); err != nil {
-			logrus.Warnf("retry_error, error handling retry, messageID=%s, err=%v", msg.MessageId, err)
+			err = errors.Wrapf(err, "retry_error, error handling retry, messageID=%s||err=%v", msg.MessageId, err)
 		}
 		return
 	}
 	span.AddEvent("order.updated")
-	logrus.Info("order consume paid event success!")
 }

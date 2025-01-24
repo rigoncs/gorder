@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/rigoncs/gorder/common/decorator"
 	"github.com/rigoncs/gorder/common/handler/redis"
+	"github.com/rigoncs/gorder/common/logging"
 	domain "github.com/rigoncs/gorder/stock/domain/stock"
 	"github.com/rigoncs/gorder/stock/entity"
 	"github.com/rigoncs/gorder/stock/infrastructure/integration"
@@ -62,7 +63,7 @@ func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfIte
 	}
 	defer func() {
 		if err := unlock(ctx, getLockKey(query)); err != nil {
-			logrus.Warnf("redis unlock fail, err=%v", err)
+			logging.Warnf(ctx, nil, "redis unlock fail, err=%v", err)
 		}
 	}()
 	var res []*entity.Item

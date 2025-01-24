@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/rigoncs/gorder/common/logging"
 	"github.com/sirupsen/logrus"
 	"io"
 	"time"
@@ -22,8 +23,8 @@ func requestOut(c *gin.Context, l *logrus.Entry) {
 	start, _ := c.Get("request_start")
 	startTime := start.(time.Time)
 	l.WithContext(c.Request.Context()).WithFields(logrus.Fields{
-		"proc_time_ms": time.Since(startTime).Milliseconds(),
-		"response":     response,
+		logging.Cost:     time.Since(startTime).Milliseconds(),
+		logging.Response: response,
 	}).Info("__request_out")
 }
 
@@ -35,9 +36,9 @@ func requestIn(c *gin.Context, l *logrus.Entry) {
 	var compactJson bytes.Buffer
 	_ = json.Compact(&compactJson, bodyBytes)
 	l.WithContext(c.Request.Context()).WithFields(logrus.Fields{
-		"start": time.Now().Unix(),
-		"args":  compactJson.String(),
-		"from":  c.RemoteIP(),
-		"uri":   c.Request.RequestURI,
+		"start":      time.Now().Unix(),
+		logging.Args: compactJson.String(),
+		"from":       c.RemoteIP(),
+		"uri":        c.Request.RequestURI,
 	}).Info("__request_in")
 }
