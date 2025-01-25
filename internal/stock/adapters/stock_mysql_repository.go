@@ -3,7 +3,7 @@ package adapters
 import (
 	"context"
 	"github.com/pkg/errors"
-	"github.com/rigoncs/gorder/stock/entity"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent/builder"
 	"github.com/sirupsen/logrus"

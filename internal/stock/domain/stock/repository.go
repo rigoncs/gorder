@@ -3,7 +3,7 @@ package stock
 import (
 	"context"
 	"fmt"
-	"github.com/rigoncs/gorder/stock/entity"
+	"github.com/rigoncs/gorder/common/entity"
 	"strings"
 )
 

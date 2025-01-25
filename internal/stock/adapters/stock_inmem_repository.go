@@ -2,8 +2,8 @@ package adapters
 
 import (
 	"context"
+	"github.com/rigoncs/gorder/common/entity"
 	domain "github.com/rigoncs/gorder/stock/domain/stock"
-	"github.com/rigoncs/gorder/stock/entity"
 	"sync"
 )
 

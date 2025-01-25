@@ -3,9 +3,9 @@ package adapters
 import (
 	"context"
 	_ "github.com/rigoncs/gorder/common/config"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/common/logging"
 	domain "github.com/rigoncs/gorder/order/domain/order"
-	"github.com/rigoncs/gorder/order/entity"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

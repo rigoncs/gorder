@@ -2,11 +2,11 @@ package ports
 
 import (
 	context "context"
+	"github.com/rigoncs/gorder/common/convertor"
 	"github.com/rigoncs/gorder/common/genproto/stockpb"
 	"github.com/rigoncs/gorder/common/tracing"
 	"github.com/rigoncs/gorder/stock/app"
 	"github.com/rigoncs/gorder/stock/app/query"
-	"github.com/rigoncs/gorder/stock/convertor"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

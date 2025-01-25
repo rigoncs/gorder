@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rigoncs/gorder/common/broker"
-	"github.com/rigoncs/gorder/common/genproto/orderpb"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/payment/app"
 	"github.com/rigoncs/gorder/payment/app/command"
@@ -62,7 +62,7 @@ func (c *Consumer) handleMessage(ch *amqp.Channel, msg amqp.Delivery, q amqp.Que
 		}
 	}()
 
-	o := &orderpb.Order{}
+	o := &entity.Order{}
 	if err = json.Unmarshal(msg.Body, o); err != nil {
 		err = errors.Wrap(err, "failed to unmarshal msg to order")
 		return

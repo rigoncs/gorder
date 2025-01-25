@@ -6,12 +6,12 @@ import (
 	"github.com/rigoncs/gorder/common"
 	client "github.com/rigoncs/gorder/common/client/order"
 	"github.com/rigoncs/gorder/common/consts"
+	"github.com/rigoncs/gorder/common/convertor"
 	"github.com/rigoncs/gorder/common/handler/errors"
 	"github.com/rigoncs/gorder/order/app"
 	"github.com/rigoncs/gorder/order/app/command"
 	"github.com/rigoncs/gorder/order/app/dto"
 	"github.com/rigoncs/gorder/order/app/query"
-	"github.com/rigoncs/gorder/order/convertor"
 	"net/http"
 )
 
@@ -69,8 +69,13 @@ func (H HTTPServer) GetCustomerCustomerIdOrdersOrderId(c *gin.Context, customerI
 		c.JSON(http.StatusOK, gin.H{"error": err})
 		return
 	}
-	resp = convertor.NewOrderConvertor().EntityToClient(o)
-
+	resp = client.Order{
+		CustomerId:  o.CustomerID,
+		Id:          o.ID,
+		Items:       convertor.NewItemConvertor().EntitiesToClients(o.Items),
+		PaymentLink: o.PaymentLink,
+		Status:      o.Status,
+	}
 }
 
 func (H HTTPServer) validate(req client.CreateOrderRequest) error {

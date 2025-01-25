@@ -3,7 +3,7 @@ package order
 import (
 	"errors"
 	"fmt"
-	"github.com/rigoncs/gorder/order/entity"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/stripe/stripe-go/v80"
 )
 

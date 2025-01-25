@@ -2,17 +2,16 @@ package command
 
 import (
 	"context"
+	"github.com/rigoncs/gorder/common/convertor"
 	"github.com/rigoncs/gorder/common/decorator"
-	"github.com/rigoncs/gorder/common/genproto/orderpb"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/common/logging"
 	"github.com/rigoncs/gorder/payment/domain"
 	"github.com/sirupsen/logrus"
 )
 
-// TODO: ACL清理
-
 type CreatePayment struct {
-	Order *orderpb.Order
+	Order *entity.Order
 }
 
 type CreatePaymentHandler decorator.CommandHandler[CreatePayment, string]
@@ -30,14 +29,14 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 	if err != nil {
 		return "", err
 	}
-	newOrder := &orderpb.Order{
+	newOrder := &entity.Order{
 		ID:          cmd.Order.ID,
 		CustomerID:  cmd.Order.CustomerID,
 		Status:      "waiting_for_payment",
 		Items:       cmd.Order.Items,
 		PaymentLink: link,
 	}
-	err = c.orderGRPC.UpdateOrder(ctx, newOrder)
+	err = c.orderGRPC.UpdateOrder(ctx, convertor.NewOrderConvertor().EntityToProto(newOrder))
 	return link, err
 }
 

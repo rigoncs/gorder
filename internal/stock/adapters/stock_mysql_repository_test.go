@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	_ "github.com/rigoncs/gorder/common/config"
-	"github.com/rigoncs/gorder/stock/entity"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent/builder"
 	"github.com/spf13/viper"

@@ -7,9 +7,9 @@ import (
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rigoncs/gorder/common/broker"
-	"github.com/rigoncs/gorder/common/genproto/orderpb"
+	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/common/logging"
-	"github.com/rigoncs/gorder/payment/domain"
+
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/stripe/stripe-go/v80"
@@ -72,7 +72,7 @@ func (h PaymentHandler) handleWebhook(c *gin.Context) {
 
 		if session.PaymentStatus == stripe.CheckoutSessionPaymentStatusPaid {
 
-			var items []*orderpb.Item
+			var items []*entity.Item
 			_ = json.Unmarshal([]byte(session.Metadata["items"]), &items)
 
 			tr := otel.Tracer("rabbitmq")
@@ -84,7 +84,7 @@ func (h PaymentHandler) handleWebhook(c *gin.Context) {
 				Routing:  broker.FanOut,
 				Queue:    "",
 				Exchange: broker.EventOrderPaied,
-				Body: &domain.Order{
+				Body: &entity.Order{
 					ID:          session.Metadata["orderID"],
 					CustomerID:  session.Metadata["customerID"],
 					Status:      string(stripe.CheckoutSessionPaymentStatusPaid),
