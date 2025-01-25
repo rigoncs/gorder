@@ -9,6 +9,7 @@ import (
 	"github.com/rigoncs/gorder/stock/infrastructure/integration"
 	"github.com/rigoncs/gorder/stock/infrastructure/persistent"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 func NewApplication(ctx context.Context) app.Application {
@@ -16,7 +17,10 @@ func NewApplication(ctx context.Context) app.Application {
 	db := persistent.NewMySQL()
 	stockRepo := adapters.NewMySQLStockRepository(db)
 	stripeAPI := integration.NewStripeAPI()
-	metricsClient := metrics.TodoMetrics{}
+	metricsClient := metrics.NewPrometheusMetricsClient(&metrics.PrometheusMetricsClientConfig{
+		Host:        viper.GetString("stock.metrics_export_addr"),
+		ServiceName: viper.GetString("stock.service-name"),
+	})
 	return app.Application{
 		Commands: app.Commands{},
 		Queries: app.Queries{
