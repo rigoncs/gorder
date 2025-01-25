@@ -22,7 +22,7 @@ type updateOrderHandler struct {
 
 func NewUpdateOrderHandler(
 	orderRepo domain.Repository,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) UpdateOrderHandler {
 	if orderRepo == nil {

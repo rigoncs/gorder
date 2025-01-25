@@ -38,7 +38,7 @@ func NewCreateOrderHandler(
 	orderRepo domain.Repository,
 	stockGRPC query.StockService,
 	channel *amqp.Channel,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) CreateOrderHandler {
 	if orderRepo == nil {
