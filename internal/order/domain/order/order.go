@@ -3,9 +3,28 @@ package order
 import (
 	"errors"
 	"fmt"
+	"github.com/rigoncs/gorder/common/consts"
 	"github.com/rigoncs/gorder/common/entity"
-	"github.com/stripe/stripe-go/v80"
+	"slices"
 )
+
+func (o *Order) UpdatePaymentLink(paymentLink string) error {
+	o.PaymentLink = paymentLink
+	return nil
+}
+
+func (o *Order) UpdateItems(items []*entity.Item) error {
+	o.Items = items
+	return nil
+}
+
+func (o *Order) UpdateStatus(to string) error {
+	if !o.isValidStatusTransition(to) {
+		return fmt.Errorf("cannot transit from '%s' to '%s'", o.Status, to)
+	}
+	o.Status = to
+	return nil
+}
 
 type Order struct {
 	ID          string
@@ -46,14 +65,20 @@ func NewPendingOrder(customerId string, items []*entity.Item) (*Order, error) {
 	}
 	return &Order{
 		CustomerID: customerId,
-		Status:     "pending",
+		Status:     consts.OrderStatusPending,
 		Items:      items,
 	}, nil
 }
 
-func (o *Order) IsPaid() error {
-	if o.Status == string(stripe.CheckoutSessionPaymentStatusPaid) {
-		return nil
+func (o *Order) isValidStatusTransition(to string) bool {
+	switch o.Status {
+	default:
+		return false
+	case consts.OrderStatusPending:
+		return slices.Contains([]string{consts.OrderStatusPending}, to)
+	case consts.OrderStatusWaitingForPayment:
+		return slices.Contains([]string{consts.OrderStatusWaitingForPayment}, to)
+	case consts.OrderStatusPaid:
+		return slices.Contains([]string{consts.OrderStatusPaid}, to)
 	}
-	return fmt.Errorf("order status not paid, order id = %s, status = %s", o.ID, o.Status)
 }

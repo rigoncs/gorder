@@ -6,6 +6,7 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/rigoncs/gorder/common/tracing"
 	"github.com/sirupsen/logrus"
+	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 	"os"
 	"strconv"
 	"time"
@@ -17,7 +18,7 @@ import (
 func Init() {
 	SetFormatter(logrus.StandardLogger())
 	logrus.SetLevel(logrus.DebugLevel)
-	setOutput(logrus.StandardLogger())
+	//setOutput(logrus.StandardLogger())
 	logrus.AddHook(&traceHook{})
 }
 
@@ -79,11 +80,11 @@ func SetFormatter(logger *logrus.Logger) {
 		},
 	})
 	if isLocal, _ := strconv.ParseBool(os.Getenv("LOCAL_ENV")); isLocal {
-		//logger.SetFormatter(&prefixed.TextFormatter{
-		//	ForceColors:     true,
-		//	ForceFormatting: true,
-		//	TimestampFormat: time.RFC3339,
-		//})
+		logger.SetFormatter(&prefixed.TextFormatter{
+			ForceColors:     true,
+			ForceFormatting: true,
+			TimestampFormat: time.RFC3339,
+		})
 	}
 }
 

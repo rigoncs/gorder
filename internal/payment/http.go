@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rigoncs/gorder/common/broker"
+	"github.com/rigoncs/gorder/common/consts"
 	"github.com/rigoncs/gorder/common/entity"
 	"github.com/rigoncs/gorder/common/logging"
 
@@ -87,7 +88,7 @@ func (h PaymentHandler) handleWebhook(c *gin.Context) {
 				Body: entity.NewOrder(
 					session.Metadata["orderID"],
 					session.Metadata["customerID"],
-					string(stripe.CheckoutSessionPaymentStatusPaid),
+					consts.OrderStatusPaid,
 					session.Metadata["paymentLink"],
 					items,
 				),
